@@ -27,7 +27,7 @@ try {
    ★쪽 탭 2개: 1 유전자변형생물체(116~118) · 2 사회적 책임(119~121).
    ★③ 「유전자 편집 토마토는 LMO인가?」와 ⓪의 GMO 표시제는 교과서 밖 자료다(교사 11-11 — 조사 출처를 화면에 밝힌다).
    ★쓰기 칸은 수행② 문항 형식(문제 → 피해 대상·침해 가치 → 입장 · 이로움 · 이유)과 같게 짰다 — 예행연습을 겸한다.
-   ★쓴 것은 맨 아래에서 과학허브 로그인으로 제출한다(접속 기록 조각 VER 4 의 hubSubmit · 칸 q1~q10).
+   ★쓴 것은 ④ · ⑦ · ⑧ 칸마다 과학허브 로그인으로 제출한다(접속 기록 조각 VER 4 의 hubSubmit · 칸 q1~q6 · ⑨는 제출하지 않음).
    ★카드는 처음부터 다 열려 있고 칸마다 되돌리기가 있다(2026-09-01 규약). 정오는 기록하지 않는다.
    ══════════════════════════════════════════════════════════════ */
 :root{
@@ -541,7 +541,7 @@ html:not(.unlocked) #draftGate{display:flex;}
     <p class="sub">120쪽 사례 ❶~❹ 가운데 하나를 골라 아래 물음에 답하시오.</p>
     <div class="chiprow" id="caseChips"></div>
     <div class="panel" id="caseText"></div>
-    <div class="wnote">📝 이 칸들은 수행평가 ②의 2번 문항과 같은 형식이다. 영향을 받는 것은 <b>실제 대상</b>(피해를 입는 사람·생물·집단)일 수도 있고, <b>가치</b>(인간의 존엄성, 생명의 존엄성 등)일 수도 있다.</div>
+    <div class="wnote">📝 영향을 받는 것은 <b>실제 대상</b>(피해를 입는 사람·생물·집단)일 수도 있고, <b>가치</b>(인간의 존엄성, 생명의 존엄성 등)일 수도 있다.</div>
     <div id="caseBox"></div>
     <div class="msg hide" id="fb_case"></div>
     <div class="btnrow"><button type="button" class="btn" id="btnSub_case" onclick="submitSec(&#39;case&#39;)">📤 제출하기</button></div>
@@ -786,8 +786,8 @@ var WRITEQ = [
     need:['규제가 필요한가에 대한 판단', '활용 범위', '근거'],
     ans:'(예시) 규제가 필요하다. 유전자 가위는 가이드 RNA가 상보적인 염기서열을 찾아 Cas9이 자르게 하므로, 원인 유전자가 분명한 낫모양적혈구빈혈증 같은 난치병의 치료에는 큰 도움이 된다. 그러나 생식세포나 배아의 유전자를 고치면 그 변화가 자손에게 전해지고, 원하는 형질을 고르는 맞춤 아기로 이어질 수 있다. 따라서 환자 자신의 체세포에서 난치병을 치료하는 범위에서만 활용하고, 생식세포와 배아의 편집은 제한해야 한다.' }
 ];
-var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];
-/* ★교사 11-11 칸마다 따로 제출(④ · ⑦ · ⑧ · ⑨) — 단추만 둔다(설명줄 없음) */
+var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];   /* 쓰기 칸 전부(저장·복원) — ⑨ q7~q10 은 제출 단추가 없어 늘 빈 채로 간다 */
+/* ★교사 11-11 칸마다 따로 제출(④ · ⑦ · ⑧ · ⑨는 제출 안 함) — 단추만 둔다(설명줄 없음) */
 var SEC_Q = { op:['q1', 'q2', 'q3'], 'case':['q4', 'q5'], baby:['q6'] };   /* ⑨는 제출하지 않는다(교사 11-11) */
 var SELFCHECK = [
   { id:'s1', k:'지식·이해', t:'LMO의 정의와 생명윤리에 대해 설명할 수 있는가?' },
@@ -1257,7 +1257,7 @@ var Q_INTRO = [
         '유전자재조합기술로 새로운 조합의 유전물질을 갖게 되었으므로 LMO이다.',
         '사람의 세포로 바뀌었으므로 더 이상 대장균이 아니다.',
         '식량으로 쓰이지 않는 생물이므로 유전자를 바꾸었더라도 LMO라고 할 수 없다.'],
-    a:1, no:['', '', '옳지 않다. 대장균은 그대로이고, 유전자 하나가 더해졌을 뿐이다.', '옳지 않다. LMO는 식량뿐 아니라 의약품·환경 분야에도 쓰인다(117쪽).'],
+    a:1, no:['옳지 않다. 사람의 인슐린 유전자가 더해져 대장균에 없던 새로운 조합의 유전물질을 갖게 되었다.', '', '옳지 않다. 대장균은 그대로이고, 유전자 하나가 더해졌을 뿐이다.', '옳지 않다. LMO는 식량뿐 아니라 의약품·환경 분야에도 쓰인다(117쪽).'],
     ex:'116쪽의 정의대로, 유전자재조합기술로 새로운 조합의 유전물질을 가진 생물체는 쓰임과 관계없이 LMO이다.' },
   { id:'q0b',
     q:'식용유에는 유전자변형 DNA가 남지 않는데도, 원료가 유전자변형 농산물이면 표시하도록 법을 바꾼 까닭과 가장 관련 깊은 것은?',
@@ -1776,13 +1776,13 @@ function init(){
   SECQ().forEach(function(L){
     L.forEach(function(p){
       var v = state.qPick[p.id];
-      if (v !== undefined && !(typeof v === 'number' && v >= 0 && v < p.ch.length)) delete state.qPick[p.id];
+      if (v !== undefined && !(typeof v === 'number' && Math.round(v) === v && v >= 0 && v < p.ch.length)) delete state.qPick[p.id];
     });
   });
   Object.keys(state.qPick).forEach(function(k){ if (!qById(k) || k.indexOf('p') === 0) delete state.qPick[k]; });
   PRACTICE.forEach(function(p){
     var v = state.pPick[p.id];
-    if (v !== undefined && !(typeof v === 'number' && v >= 0 && v < p.ch.length)) delete state.pPick[p.id];
+    if (v !== undefined && !(typeof v === 'number' && Math.round(v) === v && v >= 0 && v < p.ch.length)) delete state.pPick[p.id];
   });
   Object.keys(state.pPick).forEach(function(k){ if (!qById(k) || k.indexOf('p') !== 0) delete state.pPick[k]; });
   state.teacherUnlock = false;
