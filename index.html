@@ -9,7 +9,7 @@
    ★head에 있어야 한다 — 본문보다 먼저 돌아야 잠긴 화면이 깜빡이지 않는다.
    ★기본이 「잠김」이다(fail-closed). 조건이 맞을 때만 .unlocked가 붙는다.
    ⚠ 이것은 잠금이지 보안이 아니다. 소스를 보면 비밀번호가 보인다. */
-var DRAFT_MODE = true;                      /* ◀ 완성되면 false로 바꿔 재배포 */
+var DRAFT_MODE = false;                     /* ◀ 완성되면 false로 바꿔 재배포 */
 var DRAFT_PASS = '7856';                   /* ★교사 지정. 모든 활동이 같은 값을 쓴다 */
 var DRAFT_KEY  = 'bioethics_draft_ok';     /* ★활동마다 다른 이름 — 허브가 한 origin 이다 */
 try {
@@ -230,6 +230,12 @@ svg.stage{display:block;width:100%;min-width:560px;height:auto;touch-action:mani
 .lawc .lb{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;}
 .lawc .lb button{font:inherit;font-size:16px;font-weight:700;min-height:44px;padding:7px 14px;border-radius:9px;border:2px solid var(--eth);background:#fff;color:var(--eth-ink);cursor:pointer;}
 .lawc.ok{border-color:var(--green);background:var(--green-bg);}
+/* ★교사 11-11 「금지는 빨강, 허용은 초록」 */
+.lawc.ban{border-color:#D32F2F;background:#FDECEA;}
+.lawc.ban .lr b{color:#B71C1C;}
+.lawc.ok .lr b{color:#1B5E20;}
+.lawc .lb button.y{border-color:#2A7A38;color:#1B5E20;}
+.lawc .lb button.n{border-color:#D32F2F;color:#B71C1C;}
 .lawc .lr{margin-top:7px;font-size:15px;line-height:1.65;}
 
 /* ── 그림(교과서) ── */
@@ -294,6 +300,7 @@ textarea{
 .selfcheck input{width:22px;height:22px;margin-top:3px;flex:0 0 auto;}
 
 /* ── 제출 ── */
+.subbox{margin-top:14px;border:2px solid var(--green);border-radius:12px;padding:12px 14px;background:#fff;}
 .who{border-radius:9px;padding:10px 13px;font-size:15.5px;line-height:1.6;margin:0 0 14px;}
 .who.in{background:var(--green-bg);border-left:4px solid var(--green);}
 .who.out{background:var(--amber-bg);border-left:4px solid var(--amber);}
@@ -475,9 +482,18 @@ html:not(.unlocked) #draftGate{display:flex;}
       <div class="bub"><span class="who2">견해 3</span>LMO의 안전성은 충분히 검증되지 않았으므로 LMO를 오랫동안 먹었을 때 건강에 문제가 생길 수 있다.</div>
       <div class="bub"><span class="who2">견해 4</span>LMO에 있는 외래 유전자가 다른 생물로 옮겨 가 생태계에 영향을 줄 수 있다.</div>
     </div>
-    <div class="wnote">📝 이 칸들은 수행평가 ②의 3번 문항과 같은 형식이다. 이유는 과학적 사실이나 앞에서 확인한 내용을 근거로 하여, 입장과 논리적으로 이어지게 쓴다.</div>
+    <div class="wnote">📝 이유는 과학적 사실이나 앞에서 확인한 내용을 근거로 하여, 입장과 논리적으로 이어지게 쓴다.</div>
     <div id="opBox"></div>
     <div class="msg hide" id="fb_op"></div>
+    <div class="subbox">
+      <div class="ptitle">📤 1쪽 제출 — ④에 쓴 내용</div>
+      <div class="who out" id="who1">로그인 상태를 확인하고 있다…</div>
+      <div class="btnrow">
+        <button type="button" class="btn big" id="btnSubOp" onclick="submitOp()">📤 ④를 선생님께 제출하기</button>
+        <span class="prog" id="subProg1"></span>
+      </div>
+      <div class="msg hide" id="fb_opsub"></div>
+    </div>
     <div class="secreset"><button type="button" onclick="resetSec('op')">↻ ④ 다시 하기</button></div>
   </div>
 
@@ -587,20 +603,20 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div class="selfcheck" id="selfBox"></div>
     <div class="secreset"><button type="button" onclick="resetSec('write')">↻ ⑨ 다시 하기</button></div>
   </div>
-</div>
 
-  <!-- ══ 📤 제출 ══ -->
+  <!-- ══ 📤 2쪽 제출 (교사 11-11 「한꺼번에 말고 앞 페이지 하나, 뒷페이지 하나」) ══ -->
   <div class="card" data-hub-card="sub">
-    <div class="hd"><h2 class="green">📤 작성한 내용 제출하기</h2></div>
+    <div class="hd"><h2 class="green">📤 2쪽 제출 — ⑦ · ⑧ · ⑨에 쓴 내용</h2></div>
     <div class="who out" id="who">로그인 상태를 확인하고 있다…</div>
-    <p class="sub">④ · ⑦ · ⑧ · ⑨에 적은 내용을 한꺼번에 선생님께 제출한다. 고른 입장·사례·역할도 함께 제출된다.</p>
+    <p class="sub">⑦ · ⑧ · ⑨에 적은 내용을 선생님께 제출한다. 고른 사례·역할도 함께 제출된다. ④는 1쪽에서 따로 제출한다.</p>
     <table class="subtbl" id="subTbl"></table>
     <div class="btnrow">
-      <button type="button" class="btn big" id="btnSubmit" onclick="submitAll()">📤 선생님께 제출하기</button>
+      <button type="button" class="btn big" id="btnSubmit" onclick="submitAll()">📤 2쪽을 선생님께 제출하기</button>
       <span class="prog" id="subProg"></span>
     </div>
     <div class="msg hide" id="fb_sub"></div>
   </div>
+</div>
 
   <footer>
     <button class="btn gray" onclick="resetAll()">🔄 처음부터 다시 하기</button>
@@ -765,7 +781,7 @@ var STANCES = ['찬성', '반대', '조건부 찬성'];
 
 /* ══ 쓰기 칸 — 제출 칸 이름 q1~q10 (교사 화면 SUB_Q 와 같은 이름) ══ */
 var OPQ = [
-  { k:'q1', q:'1. LMO의 적극적 활용에 대한 자신의 입장을 위에서 고르시오. 조건부 찬성이면 본인이 생각한 조건을, 아니면 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 조건부 찬성 — ○○한 경우에만 재배를 허용해야 한다.' },
+  { k:'q1', q:'1. LMO의 적극적 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 · 조건부 찬성 중에서 하나 고르시오. 조건부 찬성이면 본인이 생각한 조건을, 아니면 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 조건부 찬성 — ○○한 경우에만 재배를 허용해야 한다.' },
   { k:'q2', q:'2. LMO로 얻을 수 있는 이로움을 쓰시오.', ph:'' },
   { k:'q3', q:'3. 2의 이로움과 견해 3·4 같은 문제를 함께 고려하여, 1의 입장을 가진 이유를 서술하시오. 이유는 과학적 사실이나 앞에서 쓴 내용을 근거로 하여, 입장과 논리적으로 이어지게 쓰시오.', ph:'' }
 ];
@@ -795,6 +811,7 @@ var WRITEQ = [
     ans:'(예시) 규제가 필요하다. 유전자 가위는 가이드 RNA가 상보적인 염기서열을 찾아 Cas9이 자르게 하므로, 원인 유전자가 분명한 낫모양적혈구빈혈증 같은 난치병의 치료에는 큰 도움이 된다. 그러나 생식세포나 배아의 유전자를 고치면 그 변화가 자손에게 전해지고, 원하는 형질을 고르는 맞춤 아기로 이어질 수 있다. 따라서 환자 자신의 체세포에서 난치병을 치료하는 범위에서만 활용하고, 생식세포와 배아의 편집은 제한해야 한다.' }
 ];
 var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];
+var P1_Q = ['q1', 'q2', 'q3'], P2_Q = ['q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];   /* ★쪽마다 따로 제출 */
 var Q_NAME = {
   q1:'④-1 입장', q2:'④-2 이로움', q3:'④-3 이유', q4:'⑦-1 문제', q5:'⑦-2 대상·까닭',
   q6:'⑧ 맞춤 아기 이유', q7:'⑨-1 LMO', q8:'⑨-2 편집 작물', q9:'⑨-3 사회적 책임', q10:'⑨-4 [창의] 유전자 가위'
@@ -1242,9 +1259,9 @@ function renderLaw(){
   var h = '';
   LAWS.forEach(function(l, i){
     var done = state.lawPick[l.id] === l.a;
-    h += '<div class="lawc' + (done ? ' ok' : '') + '"><div class="lt">' + (i + 1) + '. ' + l.t + '</div>';
-    if (done) h += '<div class="lr">✅ <b>' + (l.a === 'ok' ? '허용' : '금지') + '</b> — ' + l.why + '</div>';
-    else h += '<div class="lb"><button type="button" onclick="pickLaw(&#39;' + l.id + '&#39;,&#39;ok&#39;)">⭕ 허용</button><button type="button" onclick="pickLaw(&#39;' + l.id + '&#39;,&#39;no&#39;)">❌ 금지</button></div>';
+    h += '<div class="lawc' + (done ? (l.a === 'ok' ? ' ok' : ' ban') : '') + '"><div class="lt">' + (i + 1) + '. ' + l.t + '</div>';
+    if (done) h += '<div class="lr">' + (l.a === 'ok' ? '⭕' : '❌') + ' <b>' + (l.a === 'ok' ? '허용' : '금지') + '</b> — ' + l.why + '</div>';
+    else h += '<div class="lb"><button type="button" class="y" onclick="pickLaw(&#39;' + l.id + '&#39;,&#39;ok&#39;)">⭕ 허용</button><button type="button" class="n" onclick="pickLaw(&#39;' + l.id + '&#39;,&#39;no&#39;)">❌ 금지</button></div>';
     h += '</div>';
   });
   setHTML('lawBox', h);
@@ -1530,11 +1547,12 @@ function payload(){
   return o;
 }
 function filledAll(){ var n = 0; ALL_Q.forEach(function(k){ if (filled(k)) n++; }); return n; }
-function sameAsSubmitted(){
+function sameAsSubmitted(keys){
   if (!state.subT) return false;
   var p = payload();
-  return ALL_Q.every(function(k){ return String(p[k] || '') === String(state.subA[k] || ''); });
+  return (keys || ALL_Q).every(function(k){ return String(p[k] || '') === String(state.subA[k] || ''); });
 }
+function sentAny(keys){ return keys.some(function(k){ return !!String(state.subA[k] || ''); }); }
 function fmtTime(t){
   var d = new Date(t);
   return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
@@ -1545,42 +1563,75 @@ function whoState(){
   return w ? { k:'in', tag:w.tag } : { k:'out' };
 }
 function renderWho(){
-  var el = $('who'); if (!el) return;
   var w = whoState();
-  if (w.k === 'in'){ el.className = 'who in'; el.innerHTML = '👤 <b>' + esc(w.tag) + '</b> 으로 제출된다. 제출한 뒤에도 고쳐서 다시 제출할 수 있다(마지막에 낸 것이 남는다).'; return; }
-  el.className = 'who out';
-  if (w.k === 'out') el.innerHTML = '⚠ 로그인하지 않아 제출되지 않는다. 적은 내용은 이 기기에만 남는다. <button type="button" class="btn ghost" style="margin-left:6px" onclick="window.hubLogin &amp;&amp; window.hubLogin()">로그인하기</button>';
-  else el.innerHTML = '⚠ 이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어야 제출된다. 적은 내용은 이 기기에만 남는다.';
+  ['who', 'who1'].forEach(function(id){
+    var el = $(id); if (!el) return;
+    if (w.k === 'in'){ el.className = 'who in'; el.innerHTML = '👤 <b>' + esc(w.tag) + '</b> 으로 제출된다. 제출한 뒤에도 고쳐서 다시 제출할 수 있다(마지막에 낸 것이 남는다).'; return; }
+    el.className = 'who out';
+    if (w.k === 'out') el.innerHTML = '⚠ 로그인하지 않아 제출되지 않는다. 적은 내용은 이 기기에만 남는다. <button type="button" class="btn ghost" style="margin-left:6px" onclick="window.hubLogin &amp;&amp; window.hubLogin()">로그인하기</button>';
+    else el.innerHTML = '⚠ 이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어야 제출된다. 적은 내용은 이 기기에만 남는다.';
+  });
+}
+function partLine(keys){
+  var n = 0; keys.forEach(function(k){ if (filled(k)) n++; });
+  var line = '적은 칸 ' + n + ' / ' + keys.length;
+  if (state.subT && sentAny(keys)) line += sameAsSubmitted(keys) ? ' · ✅ 제출했다' : ' · ✏️ 고친 내용이 아직 제출되지 않았다';
+  return line;
 }
 function renderSubTbl(){
   var h = '';
-  ALL_Q.forEach(function(k){
+  P2_Q.forEach(function(k){
     var f = filled(k);
     h += '<tr><td class="n">' + k + '</td><td>' + Q_NAME[k] + '</td><td class="st ' + (f ? 'ok' : 'no') + '">' + (f ? '✏️ 작성함' : '비어 있음') + '</td></tr>';
   });
   setHTML('subTbl', h);
-  var line = '적은 칸 ' + filledAll() + ' / ' + ALL_Q.length;
-  if (state.subT) line += sameAsSubmitted() ? ' · ✅ ' + fmtTime(state.subT) + ' 에 제출했다' : ' · ✏️ 고친 내용이 아직 제출되지 않았다';
-  setHTML('subProg', line);
+  setHTML('subProg', partLine(P2_Q));
+  setHTML('subProg1', partLine(P1_Q));
 }
 var sending = false;
-function submitAll(){
-  if (sending) return;
-  var w = whoState();
-  if (w.k === 'none'){ showFb('fb_sub', 'warn', '이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어 제출하시오.'); return; }
-  if (w.k === 'out'){ showFb('fb_sub', 'warn', '로그인해야 제출된다. 위의 「로그인하기」를 누르시오. 적은 내용은 그대로 남는다.'); return; }
-  var n = filledAll();
-  if (!n){ showFb('fb_sub', 'warn', '아직 적은 내용이 없다. 한 칸 이상 적은 뒤 제출하시오.'); return; }
-  if (n < ALL_Q.length && !confirm('아직 비어 있는 칸이 있습니다. 이대로 제출하시겠습니까?\n(제출한 뒤에도 고쳐서 다시 제출할 수 있습니다.)')) return;
-  var send = payload(), btn = $('btnSubmit');
+/* ★교사 11-11 「한꺼번에 말고 앞 페이지 하나, 뒷페이지 하나」.
+   서버는 제출본 한 벌(q1~q10)을 통째로 덮어쓴다 → 보내기 직전에 서버의 지난 제출본을 읽어
+   이 쪽 칸만 지금 것으로 바꿔 보낸다(다른 쪽에 낸 것을 지우지 않는다). */
+function sendPart(keys, fb, btnId){
+  var btn = $(btnId);
   sending = true; if (btn) btn.disabled = true;
-  showFb('fb_sub', 'info', '제출하고 있다…');
-  window.hubSubmit(send).then(function(r){
+  showFb(fb, 'info', '제출하고 있다…');
+  var cur = payload(), send = {};
+  var load = (typeof window.hubLoad === 'function') ? window.hubLoad() : Promise.resolve(null);
+  load.then(function(d){
+    var base = (d && d.a) ? d.a : (state.subA || {});
+    ALL_Q.forEach(function(k){ send[k] = keys.indexOf(k) >= 0 ? cur[k] : (typeof base[k] === 'string' ? base[k] : ''); });
+    return window.hubSubmit(send);
+  }).then(function(r){
     state.subT = r.t; state.subA = send; saveState();
-    showFb('fb_sub', 'good', '✅ 제출했다 (' + fmtTime(r.t) + '). 고쳐 쓴 뒤 다시 제출하면 마지막 것으로 바뀐다.');
+    showFb(fb, 'good', '✅ 제출했다 (' + fmtTime(r.t) + '). 고쳐 쓴 뒤 다시 제출하면 마지막 것으로 바뀐다.');
   }, function(e){
-    showFb('fb_sub', 'bad', esc(typeof e === 'string' ? e : '제출하지 못했다. 다시 시도하시오.'));
+    showFb(fb, 'bad', esc(typeof e === 'string' ? e : '제출하지 못했다. 다시 시도하시오.'));
   }).then(function(){ sending = false; if (btn) btn.disabled = false; renderWho(); renderSubTbl(); });
+}
+function canSend(fb){
+  var w = whoState();
+  if (w.k === 'none'){ showFb(fb, 'warn', '이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어 제출하시오.'); return false; }
+  if (w.k === 'out'){ showFb(fb, 'warn', '로그인해야 제출된다. 위의 「로그인하기」를 누르시오. 적은 내용은 그대로 남는다.'); return false; }
+  return true;
+}
+/* 2쪽 — ⑦ · ⑧ · ⑨ */
+function submitAll(){
+  if (sending || !canSend('fb_sub')) return;
+  var n = 0; P2_Q.forEach(function(k){ if (filled(k)) n++; });
+  if (!n){ showFb('fb_sub', 'warn', '⑦ · ⑧ · ⑨에 아직 적은 내용이 없다. 한 칸 이상 적은 뒤 제출하시오.'); return; }
+  if (n < P2_Q.length && !confirm('아직 비어 있는 칸이 있습니다. 이대로 제출하시겠습니까?\n(제출한 뒤에도 고쳐서 다시 제출할 수 있습니다.)')) return;
+  sendPart(P2_Q, 'fb_sub', 'btnSubmit');
+}
+/* 1쪽 — ④ */
+function submitOp(){
+  if (sending) return;
+  var miss = [];
+  if (!state.stance) miss.push('입장(찬성 · 반대 · 조건부 찬성)');
+  OPQ.forEach(function(w){ if (!filled(w.k)) miss.push(w.q.slice(0, 2).replace('.', '') + '번'); });
+  if (miss.length){ showFb('fb_opsub', 'warn', '아직 채우지 않은 것이 있다 — ' + miss.join(', ') + '. 모두 쓴 뒤 제출하시오.'); return; }
+  if (!canSend('fb_opsub')) return;
+  sendPart(P1_Q, 'fb_opsub', 'btnSubOp');
 }
 /* 앞말 [ ] 을 떼어 본문만 돌려준다(지난 제출본을 칸에 되살릴 때) */
 function stripPrefix(s){ return String(s || '').replace(/^\[[^\]]*\]\s*/, ''); }
