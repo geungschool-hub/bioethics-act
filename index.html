@@ -300,15 +300,6 @@ textarea{
 .selfcheck input{width:22px;height:22px;margin-top:3px;flex:0 0 auto;}
 
 /* ── 제출 ── */
-.subbox{margin-top:14px;border:2px solid var(--green);border-radius:12px;padding:12px 14px;background:#fff;}
-.who{border-radius:9px;padding:10px 13px;font-size:15.5px;line-height:1.6;margin:0 0 14px;}
-.who.in{background:var(--green-bg);border-left:4px solid var(--green);}
-.who.out{background:var(--amber-bg);border-left:4px solid var(--amber);}
-.subtbl{width:100%;border-collapse:collapse;font-size:15px;margin:6px 0 4px;}
-.subtbl td{border:1px solid var(--line);padding:6px 9px;line-height:1.5;}
-.subtbl td.n{width:62px;text-align:center;font-weight:700;color:var(--sub);}
-.subtbl td.st{width:92px;text-align:center;font-weight:700;}
-.subtbl td.st.ok{color:var(--green);} .subtbl td.st.no{color:#A0A7B1;}
 .prog{font-size:15px;color:var(--sub);}
 footer{text-align:center;margin-top:22px;}
 .src{font-size:13.5px;color:var(--sub);margin-top:12px;line-height:1.7;}
@@ -485,15 +476,8 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div class="wnote">📝 이유는 과학적 사실이나 앞에서 확인한 내용을 근거로 하여, 입장과 논리적으로 이어지게 쓴다.</div>
     <div id="opBox"></div>
     <div class="msg hide" id="fb_op"></div>
-    <div class="subbox">
-      <div class="ptitle">📤 1쪽 제출 — ④에 쓴 내용</div>
-      <div class="who out" id="who1">로그인 상태를 확인하고 있다…</div>
-      <div class="btnrow">
-        <button type="button" class="btn big" id="btnSubOp" onclick="submitOp()">📤 ④를 선생님께 제출하기</button>
-        <span class="prog" id="subProg1"></span>
-      </div>
-      <div class="msg hide" id="fb_opsub"></div>
-    </div>
+    <div class="btnrow"><button type="button" class="btn" id="btnSub_op" onclick="submitSec(&#39;op&#39;)">📤 제출하기</button></div>
+    <div class="msg hide" id="fb_sub_op"></div>
     <div class="secreset"><button type="button" onclick="resetSec('op')">↻ ④ 다시 하기</button></div>
   </div>
 
@@ -560,6 +544,8 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div class="wnote">📝 이 칸들은 수행평가 ②의 2번 문항과 같은 형식이다. 영향을 받는 것은 <b>실제 대상</b>(피해를 입는 사람·생물·집단)일 수도 있고, <b>가치</b>(인간의 존엄성, 생명의 존엄성 등)일 수도 있다.</div>
     <div id="caseBox"></div>
     <div class="msg hide" id="fb_case"></div>
+    <div class="btnrow"><button type="button" class="btn" id="btnSub_case" onclick="submitSec(&#39;case&#39;)">📤 제출하기</button></div>
+    <div class="msg hide" id="fb_sub_case"></div>
     <div class="secreset"><button type="button" onclick="resetSec('case')">↻ ⑦ 다시 하기</button></div>
   </div>
 
@@ -578,6 +564,8 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div class="chiprow" id="babyStance"></div>
     <div id="babyBox"></div>
     <div class="msg hide" id="fb_baby"></div>
+    <div class="btnrow"><button type="button" class="btn" id="btnSub_baby" onclick="submitSec(&#39;baby&#39;)">📤 제출하기</button></div>
+    <div class="msg hide" id="fb_sub_baby"></div>
     <div class="secreset"><button type="button" onclick="resetSec('baby')">↻ ⑧ 다시 하기</button></div>
   </div>
 
@@ -601,21 +589,11 @@ html:not(.unlocked) #draftGate{display:flex;}
     <p class="sub">활동에서 확인한 내용을 바탕으로 서술하시오. 일정 분량 이상 서술하면 모범답안을 볼 수 있다.</p>
     <div id="writeBox"></div>
     <div class="selfcheck" id="selfBox"></div>
+    <div class="btnrow"><button type="button" class="btn" id="btnSub_write" onclick="submitSec(&#39;write&#39;)">📤 제출하기</button></div>
+    <div class="msg hide" id="fb_sub_write"></div>
     <div class="secreset"><button type="button" onclick="resetSec('write')">↻ ⑨ 다시 하기</button></div>
   </div>
 
-  <!-- ══ 📤 2쪽 제출 (교사 11-11 「한꺼번에 말고 앞 페이지 하나, 뒷페이지 하나」) ══ -->
-  <div class="card" data-hub-card="sub">
-    <div class="hd"><h2 class="green">📤 2쪽 제출 — ⑦ · ⑧ · ⑨에 쓴 내용</h2></div>
-    <div class="who out" id="who">로그인 상태를 확인하고 있다…</div>
-    <p class="sub">⑦ · ⑧ · ⑨에 적은 내용을 선생님께 제출한다. 고른 사례·역할도 함께 제출된다. ④는 1쪽에서 따로 제출한다.</p>
-    <table class="subtbl" id="subTbl"></table>
-    <div class="btnrow">
-      <button type="button" class="btn big" id="btnSubmit" onclick="submitAll()">📤 2쪽을 선생님께 제출하기</button>
-      <span class="prog" id="subProg"></span>
-    </div>
-    <div class="msg hide" id="fb_sub"></div>
-  </div>
 </div>
 
   <footer>
@@ -811,11 +789,8 @@ var WRITEQ = [
     ans:'(예시) 규제가 필요하다. 유전자 가위는 가이드 RNA가 상보적인 염기서열을 찾아 Cas9이 자르게 하므로, 원인 유전자가 분명한 낫모양적혈구빈혈증 같은 난치병의 치료에는 큰 도움이 된다. 그러나 생식세포나 배아의 유전자를 고치면 그 변화가 자손에게 전해지고, 원하는 형질을 고르는 맞춤 아기로 이어질 수 있다. 따라서 환자 자신의 체세포에서 난치병을 치료하는 범위에서만 활용하고, 생식세포와 배아의 편집은 제한해야 한다.' }
 ];
 var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];
-var P1_Q = ['q1', 'q2', 'q3'], P2_Q = ['q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];   /* ★쪽마다 따로 제출 */
-var Q_NAME = {
-  q1:'④-1 입장', q2:'④-2 이로움', q3:'④-3 이유', q4:'⑦-1 문제', q5:'⑦-2 대상·까닭',
-  q6:'⑧ 맞춤 아기 이유', q7:'⑨-1 LMO', q8:'⑨-2 편집 작물', q9:'⑨-3 사회적 책임', q10:'⑨-4 [창의] 유전자 가위'
-};
+/* ★교사 11-11 칸마다 따로 제출(④ · ⑦ · ⑧ · ⑨) — 단추만 둔다(설명줄 없음) */
+var SEC_Q = { op:['q1', 'q2', 'q3'], 'case':['q4', 'q5'], baby:['q6'], write:['q7', 'q8', 'q9', 'q10'] };
 var SELFCHECK = [
   { id:'s1', k:'지식·이해', t:'LMO의 정의와 생명윤리에 대해 설명할 수 있는가?' },
   { id:'s2', k:'과정·기능', t:'LMO의 영향과 생명공학기술의 문제점에 대해 조사하고 정리하였는가?' },
@@ -1552,7 +1527,6 @@ function sameAsSubmitted(keys){
   var p = payload();
   return (keys || ALL_Q).every(function(k){ return String(p[k] || '') === String(state.subA[k] || ''); });
 }
-function sentAny(keys){ return keys.some(function(k){ return !!String(state.subA[k] || ''); }); }
 function fmtTime(t){
   var d = new Date(t);
   return (d.getMonth() + 1) + '월 ' + d.getDate() + '일 ' + ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2);
@@ -1561,32 +1535,6 @@ function whoState(){
   if (typeof window === 'undefined' || typeof window.hubSubmit !== 'function') return { k:'none' };
   var w = window.hubWho && window.hubWho();
   return w ? { k:'in', tag:w.tag } : { k:'out' };
-}
-function renderWho(){
-  var w = whoState();
-  ['who', 'who1'].forEach(function(id){
-    var el = $(id); if (!el) return;
-    if (w.k === 'in'){ el.className = 'who in'; el.innerHTML = '👤 <b>' + esc(w.tag) + '</b> 으로 제출된다. 제출한 뒤에도 고쳐서 다시 제출할 수 있다(마지막에 낸 것이 남는다).'; return; }
-    el.className = 'who out';
-    if (w.k === 'out') el.innerHTML = '⚠ 로그인하지 않아 제출되지 않는다. 적은 내용은 이 기기에만 남는다. <button type="button" class="btn ghost" style="margin-left:6px" onclick="window.hubLogin &amp;&amp; window.hubLogin()">로그인하기</button>';
-    else el.innerHTML = '⚠ 이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어야 제출된다. 적은 내용은 이 기기에만 남는다.';
-  });
-}
-function partLine(keys){
-  var n = 0; keys.forEach(function(k){ if (filled(k)) n++; });
-  var line = '적은 칸 ' + n + ' / ' + keys.length;
-  if (state.subT && sentAny(keys)) line += sameAsSubmitted(keys) ? ' · ✅ 제출했다' : ' · ✏️ 고친 내용이 아직 제출되지 않았다';
-  return line;
-}
-function renderSubTbl(){
-  var h = '';
-  P2_Q.forEach(function(k){
-    var f = filled(k);
-    h += '<tr><td class="n">' + k + '</td><td>' + Q_NAME[k] + '</td><td class="st ' + (f ? 'ok' : 'no') + '">' + (f ? '✏️ 작성함' : '비어 있음') + '</td></tr>';
-  });
-  setHTML('subTbl', h);
-  setHTML('subProg', partLine(P2_Q));
-  setHTML('subProg1', partLine(P1_Q));
 }
 var sending = false;
 /* ★교사 11-11 「한꺼번에 말고 앞 페이지 하나, 뒷페이지 하나」.
@@ -1607,40 +1555,35 @@ function sendPart(keys, fb, btnId){
     showFb(fb, 'good', '✅ 제출했다 (' + fmtTime(r.t) + '). 고쳐 쓴 뒤 다시 제출하면 마지막 것으로 바뀐다.');
   }, function(e){
     showFb(fb, 'bad', esc(typeof e === 'string' ? e : '제출하지 못했다. 다시 시도하시오.'));
-  }).then(function(){ sending = false; if (btn) btn.disabled = false; renderWho(); renderSubTbl(); });
+  }).then(function(){ sending = false; if (btn) btn.disabled = false; });
 }
 function canSend(fb){
   var w = whoState();
   if (w.k === 'none'){ showFb(fb, 'warn', '이 화면에서는 제출되지 않는다. 과학허브에서 이 활동을 열어 제출하시오.'); return false; }
-  if (w.k === 'out'){ showFb(fb, 'warn', '로그인해야 제출된다. 위의 「로그인하기」를 누르시오. 적은 내용은 그대로 남는다.'); return false; }
+  if (w.k === 'out'){ showFb(fb, 'warn', '로그인해야 제출된다. 왼쪽 아래 「로그인하기」를 누르시오.'); return false; }
   return true;
 }
-/* 2쪽 — ⑦ · ⑧ · ⑨ */
-function submitAll(){
-  if (sending || !canSend('fb_sub')) return;
-  var n = 0; P2_Q.forEach(function(k){ if (filled(k)) n++; });
-  if (!n){ showFb('fb_sub', 'warn', '⑦ · ⑧ · ⑨에 아직 적은 내용이 없다. 한 칸 이상 적은 뒤 제출하시오.'); return; }
-  if (n < P2_Q.length && !confirm('아직 비어 있는 칸이 있습니다. 이대로 제출하시겠습니까?\n(제출한 뒤에도 고쳐서 다시 제출할 수 있습니다.)')) return;
-  sendPart(P2_Q, 'fb_sub', 'btnSubmit');
-}
-/* 1쪽 — ④ */
-function submitOp(){
-  if (sending) return;
+function submitSec(k){
+  var keys = SEC_Q[k], fb = 'fb_sub_' + k;
+  if (sending || !keys) return;
   var miss = [];
-  if (!state.stance) miss.push('입장(찬성 · 반대 · 조건부 찬성)');
-  OPQ.forEach(function(w){ if (!filled(w.k)) miss.push(w.q.slice(0, 2).replace('.', '') + '번'); });
-  if (miss.length){ showFb('fb_opsub', 'warn', '아직 채우지 않은 것이 있다 — ' + miss.join(', ') + '. 모두 쓴 뒤 제출하시오.'); return; }
-  if (!canSend('fb_opsub')) return;
-  sendPart(P1_Q, 'fb_opsub', 'btnSubOp');
+  if (k === 'op' && !state.stance) miss.push('입장');
+  if (k === 'case' && !caseBy(state.caseSel)) miss.push('사례');
+  if (k === 'baby' && !roleBy(state.role)) miss.push('역할');
+  if (k === 'baby' && !state.babySt) miss.push('견해');
+  var n = 0; keys.forEach(function(q){ if (filled(q)) n++; });
+  if (k === 'write' ? !n : n < keys.length) miss.push('쓰기 칸');
+  if (miss.length){ showFb(fb, 'warn', '아직 채우지 않았다 — ' + miss.join(', ') + '.'); return; }
+  if (!canSend(fb)) return;
+  sendPart(keys, fb, 'btnSub_' + k);
 }
 /* 앞말 [ ] 을 떼어 본문만 돌려준다(지난 제출본을 칸에 되살릴 때) */
 function stripPrefix(s){ return String(s || '').replace(/^\[[^\]]*\]\s*/, ''); }
 /* 로그인되면 지난 제출본을 불러온다 — 이 기기에 적은 것이 없을 때만 칸을 채운다(쓰던 글을 덮지 않는다) */
 function onHubLogin(){
-  renderWho();
   if (typeof window.hubLoad !== 'function') return;
   window.hubLoad().then(function(d){
-    if (!d || !d.a){ renderSubTbl(); return; }
+    if (!d || !d.a) return;
     var subA = {};
     ALL_Q.forEach(function(k){ subA[k] = typeof d.a[k] === 'string' ? d.a[k] : ''; });
     state.subT = typeof d.t === 'number' ? d.t : state.subT; state.subA = subA;
@@ -1662,7 +1605,7 @@ function updateProgTags(){
   var t4 = $('caseProg');  if (t4) t4.textContent = '작성 ' + filledOf(CASEQ) + ' / ' + CASEQ.length;
   var t5 = $('babyProg');  if (t5) t5.textContent = '작성 ' + filledOf(BABYQ) + ' / ' + BABYQ.length;
 }
-function updateAll(){ updateRail(); updateProgTags(); refreshAnsGates(); renderSubTbl(); stickyCenter(); }
+function updateAll(){ updateRail(); updateProgTags(); refreshAnsGates(); stickyCenter(); }
 /* ★왼쪽 칸(무대)은 화면 세로 가운데에 멈춘다 — 제작 표준 §2 */
 function stickyCenter(){
   if (typeof window === 'undefined' || !document.querySelectorAll) return;
@@ -1795,7 +1738,6 @@ function restoreUI(){
   renderQuizInto(PRACTICE, 'pracBox', '');
   renderWrite();
   fillInputs();
-  renderWho();
   updateAll();
 }
 function init(){
@@ -1856,8 +1798,6 @@ if (typeof window !== 'undefined' && window.addEventListener){
   window.addEventListener('resize', stickyCenter);
   /* 접속 기록 조각은 이 뒤에 붙어 있어 나중에 돈다 — 로그인 상태는 hublogin 과 load 에서 다시 본다 */
   window.addEventListener('hublogin', onHubLogin);
-  window.addEventListener('load', function(){ renderWho(); renderSubTbl(); });
-  window.addEventListener('focus', renderWho);
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ var z = $('zoom'); if (z) z.classList.remove('on'); } });
 }
 </script>
