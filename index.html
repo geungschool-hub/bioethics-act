@@ -27,7 +27,7 @@ try {
    ★쪽 탭 2개: 1 유전자변형생물체(116~118) · 2 사회적 책임(119~121).
    ★③ 「유전자 편집 토마토는 LMO인가?」와 ⓪의 GMO 표시제는 교과서 밖 자료다(교사 11-11 — 조사 출처를 화면에 밝힌다).
    ★쓰기 칸은 수행② 문항 형식(문제 → 피해 대상·침해 가치 → 입장 · 이로움 · 이유)과 같게 짰다 — 예행연습을 겸한다.
-   ★쓴 것은 ④ · ⑦ · ⑧ 칸마다 과학허브 로그인으로 제출한다(접속 기록 조각 VER 4 의 hubSubmit · 칸 q1~q6 · ⑨는 제출하지 않음).
+   ★쓴 것은 ④ · ⑦ · ⑧ 칸마다 과학허브 로그인으로 제출한다(접속 기록 조각 VER 4 의 hubSubmit · 칸 q1~q6 · ⑦ 입장·근거 q11·q12(교사 11-16) · ⑨는 제출하지 않음).
    ★카드는 처음부터 다 열려 있고 칸마다 되돌리기가 있다(2026-09-01 규약). 정오는 기록하지 않는다.
    ══════════════════════════════════════════════════════════════ */
 :root{
@@ -536,7 +536,7 @@ html:not(.unlocked) #draftGate{display:flex;}
   <div class="card" data-hub-card="s7">
     <div class="hd">
       <h2 class="eth">⑦ 생명공학기술의 문제점 — 사례 하나 고르기<span class="yr">120쪽 탐구</span></h2>
-      <span class="tag" id="caseProg">작성 0 / 2</span>
+      <span class="tag" id="caseProg">작성 0 / 4</span>
     </div>
     <p class="sub">120쪽 사례 ❶~❹ 가운데 하나를 골라 아래 물음에 답하시오.</p>
     <div class="chiprow" id="caseChips"></div>
@@ -753,17 +753,19 @@ var ROLES = [
 ];
 function roleBy(id){ var c = null; ROLES.forEach(function(x){ if (x.id === id) c = x; }); return c; }
 var BABY_ST = ['찬성', '반대'];
-var STANCES = ['찬성', '반대', '조건부 찬성'];
+var STANCES = ['찬성', '반대'];   /* 조건부 찬성 없음 — 활동에서는 입장을 분명히(교사 11-16) */
 
 /* ══ 쓰기 칸 — 제출 칸 이름 q1~q10 (교사 화면 SUB_Q 와 같은 이름) ══ */
 var OPQ = [
-  { k:'q1', q:'1. LMO의 적극적 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 · 조건부 찬성 중에서 하나 고르시오. 조건부 찬성이면 본인이 생각한 조건을, 아니면 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 조건부 찬성 — ○○한 경우에만 재배를 허용해야 한다.' },
+  { k:'q1', q:'1. LMO의 적극적 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 중에서 하나 고르고, 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 반대 — LMO의 재배는 제한해야 한다.' },
   { k:'q2', q:'2. LMO로 얻을 수 있는 이로움을 쓰시오.', ph:'' },
   { k:'q3', q:'3. 2의 이로움과 견해 3·4 같은 문제를 함께 고려하여, 1의 입장을 가진 이유를 서술하시오. 이유는 과학적 사실이나 앞에서 쓴 내용을 근거로 하여, 입장과 논리적으로 이어지게 쓰시오.', ph:'' }
 ];
 var CASEQ = [
   { k:'q4', q:'1. 고른 사례에서 생길 수 있는 사회적 문제(윤리적·법적 문제 포함)를 하나 쓰시오.', ph:'' },
-  { k:'q5', q:'2. 1의 문제로 피해를 입는 사람·생물·집단이나 침해되는 가치(인간의 존엄성 등)를 쓰고, 그렇게 되는 까닭을 설명하시오.', ph:'' }
+  { k:'q5', q:'2. 1의 문제로 피해를 입는 사람·생물·집단이나 침해되는 가치(인간의 존엄성 등)를 쓰고, 그렇게 되는 까닭을 설명하시오.', ph:'' },
+  { k:'q11', q:'3. 고른 사례에 쓰인 생명공학기술의 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 중에서 하나 골라 명확히 하고, 자신의 입장을 한 문장으로 쓰시오.', ph:'' },
+  { k:'q12', q:'4. 앞서 1과 2에서 쓴 내용을 모두 활용하여 3의 입장에 대한 근거를 논술하시오.', ph:'' }
 ];
 var BABYQ = [
   { k:'q6', q:'고른 역할의 입장에서, 맞춤 아기 연구에 찬성 또는 반대하는 이유를 서술하시오. 이유는 그 사람이 겪는 상황을 근거로 하여, 견해와 논리적으로 이어지게 쓰시오.', ph:'' }
@@ -786,9 +788,9 @@ var WRITEQ = [
     need:['규제가 필요한가에 대한 판단', '활용 범위', '근거'],
     ans:'(예시) 규제가 필요하다. 유전자 가위는 가이드 RNA가 상보적인 염기서열을 찾아 Cas9이 자르게 하므로, 원인 유전자가 분명한 낫모양적혈구빈혈증 같은 난치병의 치료에는 큰 도움이 된다. 그러나 생식세포나 배아의 유전자를 고치면 그 변화가 자손에게 전해지고, 원하는 형질을 고르는 맞춤 아기로 이어질 수 있다. 따라서 환자 자신의 체세포에서 난치병을 치료하는 범위에서만 활용하고, 생식세포와 배아의 편집은 제한해야 한다.' }
 ];
-var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];   /* 쓰기 칸 전부(저장·복원) — ⑨ q7~q10 은 제출 단추가 없어 늘 빈 채로 간다 */
+var ALL_Q = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10', 'q11', 'q12'];   /* 쓰기 칸 전부(저장·복원) — ⑨ q7~q10 은 제출 단추가 없어 늘 빈 채로 간다 */
 /* ★교사 11-11 칸마다 따로 제출(④ · ⑦ · ⑧ · ⑨는 제출 안 함) — 단추만 둔다(설명줄 없음) */
-var SEC_Q = { op:['q1', 'q2', 'q3'], 'case':['q4', 'q5'], baby:['q6'] };   /* ⑨는 제출하지 않는다(교사 11-11) */
+var SEC_Q = { op:['q1', 'q2', 'q3'], 'case':['q4', 'q5', 'q11', 'q12'], baby:['q6'] };   /* ⑨는 제출하지 않는다(교사 11-11) */
 var SELFCHECK = [
   { id:'s1', k:'지식·이해', t:'LMO의 정의와 생명윤리에 대해 설명할 수 있는가?' },
   { id:'s2', k:'과정·기능', t:'LMO의 영향과 생명공학기술의 문제점에 대해 조사하고 정리하였는가?' },
@@ -831,6 +833,7 @@ function freshState(){
     stance:'',         /* ④ 입장 */
     lawPick:{},        /* ⑥ 고른 판정 { l1:'no' } — 옳은 것만 남긴다 */
     caseSel:'',        /* ⑦ 고른 사례 */
+    caseStance:'',     /* ⑦ 입장(교사 11-16) */
     role:'', babySt:'',/* ⑧ 역할 · 견해 */
     qPick:{}, pPick:{}, ta:{}, self:{},
     subT:0, subA:{},   /* 마지막 제출 시각 · 제출한 내용 */
@@ -906,7 +909,7 @@ function stepDone(k){
   if (k === 'op')    return !!state.stance && filledOf(OPQ) === OPQ.length;
   if (k === 'eth')   return answeredOf(Q_ETH, state.qPick) === Q_ETH.length;
   if (k === 'law')   return lawCount() === LAWS.length;
-  if (k === 'case')  return !!state.caseSel && filledOf(CASEQ) === CASEQ.length;
+  if (k === 'case')  return !!state.caseSel && !!state.caseStance && filledOf(CASEQ) === CASEQ.length;
   if (k === 'baby')  return !!state.role && !!state.babySt && filledOf(BABYQ) === BABYQ.length;
   return false;
 }
@@ -1203,6 +1206,20 @@ function renderCase(){
   }).join(''));
   var c = caseBy(state.caseSel);
   setHTML('caseText', c ? '<div class="ptitle">사례 ' + c.no + ' ' + c.name + '</div><p>' + c.t + '</p>' : '<p>위에서 사례를 하나 고르시오.</p>');
+}
+function renderCaseBox(){
+  var chips = '<div class="chiprow" id="caseStChips">' + STANCES.map(function(s){
+    return '<button type="button" class="pchip' + (state.caseStance === s ? ' on' : '') + '" onclick="pickCaseStance(&#39;' + s + '&#39;)">' + s + '</button>';
+  }).join('') + '</div>';
+  setHTML('caseBox', CASEQ.slice(0, 2).map(taHtml).join('') + chips + CASEQ.slice(2).map(taHtml).join(''));
+}
+function pickCaseStance(s){
+  if (STANCES.indexOf(s) < 0) return;
+  state.caseStance = s; saveState();
+  var row = document.querySelectorAll ? document.querySelectorAll('#caseStChips .pchip') : [];
+  for (var i = 0; i < row.length; i++) row[i].className = 'pchip' + (row[i].textContent === s ? ' on' : '');
+  if (typeof window !== 'undefined' && window.hubTrack) window.hubTrack('s7', 'stance', s);
+  updateAll();
 }
 function pickCase(id){
   if (!caseBy(id)) return;
@@ -1507,6 +1524,7 @@ function onSelf(k){
 function prefixOf(k){
   if (k === 'q1') return state.stance ? '[입장: ' + state.stance + '] ' : '';
   if (k === 'q4'){ var c = caseBy(state.caseSel); return c ? '[사례 ' + c.no + ' ' + c.name + '] ' : ''; }
+  if (k === 'q11') return state.caseStance ? '[입장: ' + state.caseStance + '] ' : '';
   if (k === 'q6'){ var r = roleBy(state.role); return (r || state.babySt) ? '[역할: ' + (r ? r.name : '—') + ' · ' + (state.babySt || '—') + '] ' : ''; }
   return '';
 }
@@ -1567,6 +1585,7 @@ function submitSec(k){
   var miss = [];
   if (k === 'op' && !state.stance) miss.push('입장');
   if (k === 'case' && !caseBy(state.caseSel)) miss.push('사례');
+  if (k === 'case' && !state.caseStance) miss.push('입장');
   if (k === 'baby' && !roleBy(state.role)) miss.push('역할');
   if (k === 'baby' && !state.babySt) miss.push('견해');
   var n = 0; keys.forEach(function(q){ if (filled(q)) n++; });
@@ -1661,7 +1680,7 @@ var SEC_DEF = {
   op:    { qs:function(){ return []; }, ta:OPQ,   ask:true, fb:'fb_op',   msg:'④의 입장과 적은 내용을 지웠다.', run:function(){ state.stance = ''; } },
   eth:   { qs:function(){ return Q_ETH; },   fb:'fb_eth',   msg:'⑤의 문항을 지웠다.', run:function(){} },
   law:   { qs:function(){ return []; },      fb:'fb_law',   msg:'⑥의 판정을 모두 지웠다.', run:function(){ state.lawPick = {}; } },
-  case:  { qs:function(){ return []; }, ta:CASEQ, ask:true, fb:'fb_case', msg:'⑦에서 고른 사례와 적은 내용을 지웠다.', run:function(){ state.caseSel = ''; } },
+  case:  { qs:function(){ return []; }, ta:CASEQ, ask:true, fb:'fb_case', msg:'⑦에서 고른 사례·입장과 적은 내용을 지웠다.', run:function(){ state.caseSel = ''; state.caseStance = ''; } },
   baby:  { qs:function(){ return []; }, ta:BABYQ, ask:true, fb:'fb_baby', msg:'⑧에서 고른 역할·견해와 적은 내용을 지웠다.', run:function(){ state.role = ''; state.babySt = ''; } },
   prac:  { prac:true, fb:'', msg:'💪의 문항을 지웠다.' },
   write: { ta:WRITEQ, ask:true, self:true, fb:'', msg:'⑨에 적은 답안과 자기평가를 지웠다.' }
@@ -1725,7 +1744,7 @@ function restoreUI(){
   renderOp();
   renderLaw();
   renderCase();
-  setHTML('caseBox', CASEQ.map(taHtml).join(''));
+  renderCaseBox();
   renderBaby();
   setHTML('babyBox', BABYQ.map(taHtml).join(''));
   legendFill();
@@ -1767,6 +1786,7 @@ function init(){
   if (STANCES.indexOf(state.stance) < 0) state.stance = '';
   Object.keys(state.lawPick).forEach(function(k){ var l = lawBy(k); if (!l || state.lawPick[k] !== l.a) delete state.lawPick[k]; });
   if (!caseBy(state.caseSel)) state.caseSel = '';
+  if (STANCES.indexOf(state.caseStance) < 0) state.caseStance = '';
   if (!roleBy(state.role)) state.role = '';
   if (BABY_ST.indexOf(state.babySt) < 0) state.babySt = '';
   Object.keys(state.ta).forEach(function(k){ if (ALL_Q.indexOf(k) < 0 || typeof state.ta[k] !== 'string') delete state.ta[k]; else state.ta[k] = state.ta[k].slice(0, MAXLEN); });
