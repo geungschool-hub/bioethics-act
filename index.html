@@ -149,6 +149,27 @@ svg.stage{display:block;width:100%;min-width:560px;height:auto;touch-action:mani
 .msg.info{background:var(--blue-bg);border-left:4px solid var(--blue);}
 .msg.bad{background:var(--red-bg);border-left:4px solid var(--red);}
 .msg.hide{display:none;}
+/* ⑦ 친구의 의견 보기(교사 11-16 · 패들렛 느낌) — 찬성 청록 · 반대 보라 */
+.wall-ov{position:fixed;inset:0;z-index:9000;background:#EDEBF5;overflow-y:auto;-webkit-overflow-scrolling:touch;background-image:radial-gradient(#D6D1E8 1.2px,transparent 1.2px);background-size:22px 22px;}
+.wall-ov.hide{display:none;}
+.wall-top{position:sticky;top:0;z-index:2;display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:12px 18px;background:rgba(255,255,255,.96);border-bottom:1px solid var(--line);}
+.wall-top h2{font-size:20px;margin:0;flex:1 1 auto;background:none;border:0;padding:0;}
+.wall-top .wcnt{font-size:16px;color:var(--sub);}
+.wall-top button{min-height:44px;min-width:44px;font-size:16px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer;}
+.wall-filt{display:flex;flex-wrap:wrap;gap:8px;padding:12px 18px 0;}
+.wall-filt button{min-height:44px;font-size:16px;padding:0 14px;border-radius:22px;border:1px solid var(--line);background:#fff;cursor:pointer;}
+.wall-filt button.on{background:var(--ink);color:#fff;border-color:var(--ink);}
+.wall-grid{columns:3 280px;column-gap:16px;padding:16px 18px 40px;}
+.wcard{break-inside:avoid;display:inline-block;width:100%;margin:0 0 16px;background:#fff;border-radius:12px;box-shadow:0 2px 8px rgba(40,30,80,.12);border-top:6px solid var(--line);padding:12px 14px 14px;}
+.wcard.st-yes{border-top-color:var(--crop);}
+.wcard.st-no{border-top-color:var(--eth);}
+.wcard .wtag{font-size:15px;font-weight:700;margin-bottom:6px;}
+.wcard.st-yes .wtag{color:var(--crop-ink);}
+.wcard.st-no .wtag{color:var(--eth-ink);}
+.wcard .wtx{font-size:16px;line-height:1.6;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;}
+.wcard .wme{margin-top:8px;font-size:14px;color:var(--sub);}
+.wall-empty{padding:40px 18px;font-size:17px;color:var(--sub);text-align:center;}
+body.wall-open{overflow:hidden;}
 
 /* ── 연출 제어 막대 + 캡션 (제작 표준 §4) ── */
 .anibar{display:flex;flex-wrap:wrap;align-items:center;gap:7px;margin-top:8px;}
@@ -545,6 +566,7 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div id="caseBox"></div>
     <div class="msg hide" id="fb_case"></div>
     <div class="btnrow"><button type="button" class="btn" id="btnSub_case" onclick="submitSec(&#39;case&#39;)">📤 제출하기</button></div>
+    <p class="sub" style="margin-top:6px">🔒 제출한 4번 글은 이름·학번 없이 「친구의 의견 보기」에 실린다.</p>
     <div class="msg hide" id="fb_sub_case"></div>
     <div class="secreset"><button type="button" onclick="resetSec('case')">↻ ⑦ 다시 하기</button></div>
   </div>
@@ -1234,7 +1256,8 @@ function renderCaseBox(){
     CASE_CK.map(function(c){
       return '<label><input type="checkbox" id="cck_' + c.id + '"' + (state.caseCk[c.id] ? ' checked' : '') + ' onchange="onCaseCk(&#39;' + c.id + '&#39;)"><span>' + c.t + '</span></label>';
     }).join('') + '</div>';
-  setHTML('caseBox', CASEQ.slice(0, 2).map(taHtml).join('') + chips + CASEQ.slice(2).map(taHtml).join('') + ck);
+  var wb = '<div class="btnrow"><button type="button" class="btn ghost" id="btnWall" onclick="openWall()">👀 친구의 의견 보기</button></div>';
+  setHTML('caseBox', CASEQ.slice(0, 2).map(taHtml).join('') + chips + CASEQ.slice(2).map(taHtml).join('') + wb + ck);
 }
 function onCaseCk(id){
   var el = $('cck_' + id);
@@ -1574,9 +1597,58 @@ function sendPart(keys, fb, btnId){
   }).then(function(r){
     state.subT = r.t; state.subA = send; saveState();
     showFb(fb, 'good', '✅ 제출했다 (' + fmtTime(r.t) + '). 고쳐 쓴 뒤 다시 제출하면 마지막 것으로 바뀐다.');
+    if (keys.indexOf('q12') >= 0 && typeof window.hubWallPost === 'function' && wallEntry()) return window.hubWallPost('q12', wallEntry()).then(null, function(){});
   }, function(e){
     showFb(fb, 'bad', esc(typeof e === 'string' ? e : '제출하지 못했다. 다시 시도하시오.'));
   }).then(function(){ sending = false; if (btn) btn.disabled = false; });
+}
+/* ══ ⑦ 친구의 의견 보기(교사 11-16) — 4번(q12)을 제출하면 이름·학번 없이 의견판에 함께 실린다 · 화면 전용 상태 ══ */
+var WALL = { list:null, st:'', cs:'', busy:false };
+function wallEntry(){
+  var c = caseBy(state.caseSel), x = String(state.ta.q12 || '').trim();
+  if (!x) return null;
+  return { x:x.slice(0, 1000), s:(STANCES.indexOf(state.caseStance) >= 0 ? state.caseStance : ''), g:(c ? c.no + ' ' + c.name : '') };
+}
+function wallFiltered(){
+  return (WALL.list || []).filter(function(e){
+    if (WALL.st && e.s !== WALL.st) return false;
+    if (WALL.cs && e.g.indexOf(WALL.cs) !== 0) return false;
+    return true;
+  });
+}
+function wallCardHtml(e){
+  var cls = e.s === '찬성' ? ' st-yes' : (e.s === '반대' ? ' st-no' : '');
+  var tag = [e.g, e.s].filter(function(v){ return !!v; }).join(' · ');
+  return '<div class="wcard' + cls + '">' + (tag ? '<div class="wtag">' + esc(tag) + '</div>' : '') +
+         '<div class="wtx">' + esc(e.x) + '</div>' + (e.me ? '<div class="wme">✏️ 내 의견</div>' : '') + '</div>';
+}
+function renderWall(){
+  var f = '<button type="button" class="' + (!WALL.st ? 'on' : '') + '" onclick="wallSt(&#39;&#39;)">입장 전체</button>' +
+    STANCES.map(function(v){ return '<button type="button" class="' + (WALL.st === v ? 'on' : '') + '" onclick="wallSt(&#39;' + v + '&#39;)">' + v + '</button>'; }).join('') +
+    '<button type="button" class="' + (!WALL.cs ? 'on' : '') + '" onclick="wallCs(&#39;&#39;)">사례 전체</button>' +
+    CASES.map(function(c){ return '<button type="button" class="' + (WALL.cs === c.no ? 'on' : '') + '" onclick="wallCs(&#39;' + c.no + '&#39;)">' + c.no + ' ' + c.name + '</button>'; }).join('');
+  setHTML('wallFilt', f);
+  var cnt = $('wallCnt');
+  if (WALL.list === null){ if (cnt) cnt.textContent = ''; setHTML('wallGrid', '<div class="wall-empty">' + (WALL.busy ? '불러오고 있다…' : '로그인한 뒤에 친구의 의견을 볼 수 있다. 과학허브에서 로그인하시오.') + '</div>'); return; }
+  var L = wallFiltered();
+  if (cnt) cnt.textContent = '의견 ' + L.length + '개';
+  setHTML('wallGrid', L.length ? L.map(wallCardHtml).join('') : '<div class="wall-empty">아직 올라온 의견이 없다.</div>');
+}
+function wallSt(v){ if (v && STANCES.indexOf(v) < 0) return; WALL.st = v; renderWall(); }
+function wallCs(v){ if (v && !CASES.some(function(c){ return c.no === v; })) return; WALL.cs = v; renderWall(); }
+function loadWall(){
+  if (typeof window === 'undefined' || typeof window.hubWallLoad !== 'function'){ WALL.list = null; WALL.busy = false; renderWall(); return; }
+  WALL.busy = true; WALL.list = null; renderWall();
+  window.hubWallLoad('q12').then(function(L){ WALL.busy = false; WALL.list = L; renderWall(); }, function(){ WALL.busy = false; WALL.list = null; renderWall(); });
+}
+function openWall(){
+  var o = $('wallOv'); if (o) o.className = 'wall-ov';
+  if (typeof document !== 'undefined' && document.body) document.body.className = (document.body.className.replace(/\s*wall-open/g, '') + ' wall-open').trim();
+  loadWall();
+}
+function closeWall(){
+  var o = $('wallOv'); if (o) o.className = 'wall-ov hide';
+  if (typeof document !== 'undefined' && document.body) document.body.className = document.body.className.replace(/\s*wall-open/g, '').trim();
 }
 function canSend(fb){
   var w = whoState();
@@ -1826,6 +1898,11 @@ if (typeof window !== 'undefined' && window.addEventListener){
   document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ var z = $('zoom'); if (z) z.classList.remove('on'); } });
 }
 </script>
+<div class="wall-ov hide" id="wallOv" role="dialog" aria-label="⑦ 4번 — 친구의 의견">
+  <div class="wall-top"><h2>👀 친구의 의견 — ⑦ 4번</h2><span class="wcnt" id="wallCnt"></span><button type="button" onclick="loadWall()">↻ 새로 보기</button><button type="button" onclick="closeWall()">✕ 닫기</button></div>
+  <div class="wall-filt" id="wallFilt"></div>
+  <div class="wall-grid" id="wallGrid"></div>
+</div>
 <!-- ▼ 접속 기록 (정본: _접속기록/기록조각.html · _붙이기.js 로 넣는다 · 손으로 고치지 말 것) -->
 <script>
 (function(){
@@ -1923,7 +2000,7 @@ if (typeof window !== 'undefined' && window.addEventListener){
      ★기록하는 것은 「들어감 · 머문 시간 · 다시 하기」뿐이다. 정답·힌트는 기록하지 않는다(작업노트/방법_활동기록_어디에남길것인가.md).
      ★이름 전체는 기기에 남기지 않는다(학번 + 성 첫 글자만). 기록 칸(track)에는 이름·학번이 없다(uid 만). */
   var APP = 'bioethics-act';
-  var VER = 5;   /* 2: 익명 선택 기기에 남김 · PIN 분실 안내 · 카드 고정 키(data-hub-card) · 3: 접속 기록에 로그인 상태 m(__hubMode) · 4: 작성 내용 제출(hubSubmit) + 추가 동의 ag2 · 5: 교사 = 교사용 계정 로그인(교사 기기 표시를 없앰) */
+  var VER = 6;   /* 6: 친구의 의견 보기(hubWallPost · hubWallLoad · 교사 11-16) · 2: 익명 선택 기기에 남김 · PIN 분실 안내 · 카드 고정 키(data-hub-card) · 3: 접속 기록에 로그인 상태 m(__hubMode) · 4: 작성 내용 제출(hubSubmit) + 추가 동의 ag2 · 5: 교사 = 교사용 계정 로그인(교사 기기 표시를 없앰) */
   var KEY = 'AIzaSyDNsHgzaruofl82oqrEb7GGkJhv8M04_YY';
   var DB = 'https://geung-hub-stats-default-rtdb.asia-southeast1.firebasedatabase.app';
   var IDT = 'https://identitytoolkit.googleapis.com/v1/accounts:';
@@ -2049,8 +2126,12 @@ if (typeof window !== 'undefined' && window.addEventListener){
       db.claim[m[3]] = body; return res(200, body);
     }
     if (m[0] === 'st' && m[3] === 'on'){ db.st[m[1]][m[2]].on = true; return res(200, true); }
-    if (m[0] === 'users' || m[0] === 'sub'){   /* 제출 실측용 — 경로 그대로 저장 · 서버 시각은 지금 시각으로 */
+    if (m[0] === 'users' || m[0] === 'sub' || m[0] === 'wall'){   /* 제출·의견판 실측용 — 경로 그대로 저장 · 서버 시각은 지금 시각으로 */
       var kp = m.join('/'), kv = demoStore.kv || (demoStore.kv = {});
+      if (meth === 'GET' && m[0] === 'wall'){   /* wall/{app}/{q} 는 자식들을 모아 준다 */
+        var wo = null; Object.keys(kv).forEach(function(k){ if (k.indexOf(kp + '/') === 0){ wo = wo || {}; wo[k.slice(kp.length + 1)] = kv[k]; } });
+        return res(200, wo);
+      }
       if (meth === 'GET') return res(200, kv[kp] === undefined ? null : kv[kp]);
       var put = JSON.parse(JSON.stringify(body), function(k, v){ return v && v['.sv'] ? now() : v; });
       kv[kp] = put; if (m[0] === 'users' && put && put.ag2) kv[kp + '/ag2'] = put.ag2;
@@ -2444,6 +2525,47 @@ if (typeof window !== 'undefined' && window.addEventListener){
       if (r.ok) return { t: (r.data && typeof r.data.t === 'number') ? r.data.t : now() };
       throw r.status ? '제출이 거부되었다. 선생님께 문의하시오. (' + r.status + ')' : '인터넷 연결이 불안정하다. 다시 시도하시오.';
     }, function(e){ throw (typeof e === 'string') ? e : (e && e.timeout ? '서버가 답하지 않는다. 잠시 뒤 다시 시도하시오.' : '로그인이 풀렸다. 다시 로그인하시오.'); });
+  };
+
+  /* ── 친구의 의견 보기 (VER 6 · 교사 11-16 「이름·학번 없이 의견만 · 패들렛 느낌」) ─────────
+     저장 자리 wall/{APP}/{q}/{uid} = {x 글, s 입장, g 사례, t} — 이름·학번은 싣지 않는다.
+     쓰기: 로그인 + 제출 동의(ag2)를 한 학생 자기 자리만 · 읽기: 로그인한 학생(users/{uid} 있음) · 교사는 전체.
+     읽어 줄 때 uid 는 떼고 「내 글인가(me)」만 알려 준다. */
+  function wallQ(q){ return typeof q === 'string' && /^q[0-9]{1,2}$/.test(q); }
+  function wallOk(e){
+    return !!e && typeof e.x === 'string' && e.x.replace(/\s/g, '').length > 0 && e.x.length <= 1000 &&
+      (e.s === undefined || (typeof e.s === 'string' && e.s.length <= 20)) &&
+      (e.g === undefined || (typeof e.g === 'string' && e.g.length <= 30));
+  }
+  W.hubWallPost = function(q, e){
+    var bad = needLive();
+    if (bad) return Promise.reject(bad);
+    if (!wallQ(q) || !wallOk(e)) return Promise.reject('의견이 없거나 너무 길다.');
+    var tok, b = { x: e.x, t: { '.sv': 'timestamp' } };
+    if (e.s) b.s = e.s;
+    if (e.g) b.g = e.g;
+    return freshToken().then(function(t){ tok = t; return ensureAg2(tok); }).then(function(){
+      return dbCall('PUT', 'wall/' + APP + '/' + q + '/' + me.uid, b, tok);
+    }).then(function(r){
+      if (r.ok) return true;
+      throw '의견을 올리지 못했다.';
+    }, function(e2){ throw (typeof e2 === 'string') ? e2 : '의견을 올리지 못했다.'; });
+  };
+  W.hubWallLoad = function(q){
+    if (needLive() || !wallQ(q)) return Promise.resolve(null);
+    return freshToken().then(function(tok){ return dbCall('GET', 'wall/' + APP + '/' + q, null, tok); })
+      .then(function(r){
+        if (!r.ok) return null;
+        var o = (r.data && typeof r.data === 'object') ? r.data : {}, out = [];
+        Object.keys(o).forEach(function(k){
+          var v = o[k];
+          if (!v || typeof v.x !== 'string') return;
+          out.push({ x: v.x, s: typeof v.s === 'string' ? v.s : '', g: typeof v.g === 'string' ? v.g : '',
+                     t: typeof v.t === 'number' ? v.t : 0, me: !!me && k === me.uid });
+        });
+        out.sort(function(a, b2){ return b2.t - a.t; });
+        return out;
+      }, function(){ return null; });
   };
 
   /* ── 시작 ── */
