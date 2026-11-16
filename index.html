@@ -756,10 +756,11 @@ var BABY_ST = ['찬성', '반대'];
 var STANCES = ['찬성', '반대'];   /* 조건부 찬성 없음 — 활동에서는 입장을 분명히(교사 11-16) */
 
 /* ══ 쓰기 칸 — 제출 칸 이름 q1~q10 (교사 화면 SUB_Q 와 같은 이름) ══ */
+/* ★교사 11-16 — 고른 LMO 의 사례·원리(q2)를 입장(q1)보다 먼저 쓴다 · 칸 이름(q1~q3)은 제출·교사 화면과 맞추려고 그대로 둔다 */
 var OPQ = [
-  { k:'q1', q:'1. LMO의 적극적 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 중에서 하나 고르고, 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 반대 — LMO의 재배는 제한해야 한다.' },
-  { k:'q2', q:'2. ①에서 분류한 LMO 가운데 하나를 골라, 어떤 문제를 해결하려고 어떤 유전자를 넣어 어떤 형질을 얻었는지 쓰시오.', ph:'' },
-  { k:'q3', q:'3. 견해 1~4 가운데 자신의 입장과 반대쪽에 있는 견해 하나를 골라, 그 견해가 지적하는 점을 어떻게 보는지 밝히며 1의 입장에 대한 근거를 서술하시오.', ph:'' }
+  { k:'q2', q:'1. 위 단추에서 LMO 하나를 골라, 어떤 문제를 해결하려고 어떤 유전자를 넣어 어떤 형질을 얻었는지 쓰시오.', ph:'' },
+  { k:'q1', q:'2. LMO의 적극적 활용에 대한 자신의 입장을 위 단추의 찬성 · 반대 중에서 하나 고르고, 자신의 입장을 한 문장으로 쓰시오.', ph:'예) 반대 — LMO의 재배는 제한해야 한다.' },
+  { k:'q3', q:'3. 견해 1~4 가운데 자신의 입장과 반대쪽에 있는 견해 하나를 골라, 그 견해가 지적하는 점을 어떻게 보는지 밝히며 2의 입장에 대한 근거를 서술하시오.', ph:'' }
 ];
 var CASEQ = [
   { k:'q4', q:'1. 고른 사례에서 생명공학기술의 어떤 특징 때문에 사회적 문제(윤리적·법적 문제 포함)가 생기는지 쓰시오.', ph:'' },
@@ -835,6 +836,7 @@ function freshState(){
     weedSeen:false,    /* ② 마지막 국면까지 보았는가 */
     viewSel:'', viewSeen:{},   /* ③ 고른 비교 · 본 비교 */
     ctrySel:'', ctrySeen:{},   /* ③ 고른 나라 · 본 나라 */
+    lmoSel:'',         /* ④ 고른 LMO(①의 카드 · 교사 11-16) */
     stance:'',         /* ④ 입장 */
     lawPick:{},        /* ⑥ 고른 판정 { l1:'no' } — 옳은 것만 남긴다 */
     caseSel:'',        /* ⑦ 고른 사례 */
@@ -912,7 +914,7 @@ function stepDone(k){
   if (k === 'sort')  return sortCount() === LMO_CARDS.length;
   if (k === 'weed')  return !!state.weedSeen && answeredOf(Q_WEED, state.qPick) === Q_WEED.length;
   if (k === 'edit')  return seenCount(state.viewSeen) === VIEWS.length && seenCount(state.ctrySeen) === CTRY.length && answeredOf(Q_EDIT, state.qPick) === Q_EDIT.length;
-  if (k === 'op')    return !!state.stance && filledOf(OPQ) === OPQ.length;
+  if (k === 'op')    return !!state.lmoSel && !!state.stance && filledOf(OPQ) === OPQ.length;
   if (k === 'eth')   return answeredOf(Q_ETH, state.qPick) === Q_ETH.length;
   if (k === 'law')   return lawCount() === LAWS.length;
   if (k === 'case')  return !!state.caseSel && !!state.caseStance && filledOf(CASEQ) === CASEQ.length;
@@ -1192,16 +1194,27 @@ function taHtml(w){
          '<div class="cnt" id="cnt_' + w.k + '">0자</div></div>';
 }
 function renderOp(){
-  var h = '<div class="chiprow">' + STANCES.map(function(s){
+  var lm = '<div class="chiprow" id="lmoChips">' + LMO_CARDS.map(function(c){
+    return '<button type="button" class="pchip' + (state.lmoSel === c.id ? ' on' : '') + '" onclick="pickLmo(&#39;' + c.id + '&#39;)">' + c.t + '</button>';
+  }).join('') + '</div>';
+  var h = '<div class="chiprow" id="opStChips">' + STANCES.map(function(s){
     return '<button type="button" class="pchip' + (state.stance === s ? ' on' : '') + '" onclick="pickStance(&#39;' + s + '&#39;)">' + s + '</button>';
   }).join('') + '</div>';
-  h += OPQ.map(taHtml).join('');
-  setHTML('opBox', h);
+  setHTML('opBox', lm + taHtml(OPQ[0]) + h + OPQ.slice(1).map(taHtml).join(''));
+}
+function pickLmo(id){
+  if (!lmoCardBy(id)) return;
+  state.lmoSel = id; saveState();
+  var row = document.querySelectorAll ? document.querySelectorAll('#lmoChips .pchip') : [];
+  var c = lmoCardBy(id);
+  for (var i = 0; i < row.length; i++) row[i].className = 'pchip' + (row[i].textContent === c.t ? ' on' : '');
+  if (typeof window !== 'undefined' && window.hubTrack) window.hubTrack('s4', 'lmo', id);
+  updateAll();
 }
 function pickStance(s){
   if (STANCES.indexOf(s) < 0) return;
   state.stance = s; saveState();
-  var row = document.querySelectorAll ? document.querySelectorAll('#opBox .chiprow .pchip') : [];
+  var row = document.querySelectorAll ? document.querySelectorAll('#opStChips .pchip') : [];
   for (var i = 0; i < row.length; i++) row[i].className = 'pchip' + (row[i].textContent === s ? ' on' : '');
   if (typeof window !== 'undefined' && window.hubTrack) window.hubTrack('s4', 'stance', s);
   updateAll();
@@ -1514,6 +1527,7 @@ function onSelf(k){
    ★고른 입장·사례·역할은 글 앞에 [ ]로 붙여 보낸다 — DB 규칙(q숫자 · 2000자)을 바꾸지 않는다. */
 function prefixOf(k){
   if (k === 'q1') return state.stance ? '[입장: ' + state.stance + '] ' : '';
+  if (k === 'q2'){ var m = lmoCardBy(state.lmoSel); return m ? '[LMO: ' + m.t + '] ' : ''; }
   if (k === 'q4'){ var c = caseBy(state.caseSel); return c ? '[사례 ' + c.no + ' ' + c.name + '] ' : ''; }
   if (k === 'q11') return state.caseStance ? '[입장: ' + state.caseStance + '] ' : '';
   if (k === 'q6'){ var r = roleBy(state.role); return (r || state.babySt) ? '[역할: ' + (r ? r.name : '—') + ' · ' + (state.babySt || '—') + '] ' : ''; }
@@ -1668,7 +1682,7 @@ var SEC_DEF = {
   sort:  { qs:function(){ return []; },      fb:'fb_sort',  msg:'①의 분류를 모두 지웠다.', run:function(){ state.sortPut = {}; } },
   weed:  { qs:function(){ return Q_WEED; },  fb:'fb_weed',  msg:'②를 처음 단계로 되돌리고 문항을 지웠다.', run:function(){ state.weedSeen = false; PH.weed = 0; } },
   edit:  { qs:function(){ return Q_EDIT; },  fb:'fb_edit',  msg:'③에서 본 비교·나라를 지웠다.', run:function(){ state.viewSel = ''; state.viewSeen = {}; state.ctrySel = ''; state.ctrySeen = {}; } },
-  op:    { qs:function(){ return []; }, ta:OPQ,   ask:true, fb:'fb_op',   msg:'④의 입장과 적은 내용을 지웠다.', run:function(){ state.stance = ''; } },
+  op:    { qs:function(){ return []; }, ta:OPQ,   ask:true, fb:'fb_op',   msg:'④에서 고른 LMO·입장과 적은 내용을 지웠다.', run:function(){ state.lmoSel = ''; state.stance = ''; } },
   eth:   { qs:function(){ return Q_ETH; },   fb:'fb_eth',   msg:'⑤의 문항을 지웠다.', run:function(){} },
   law:   { qs:function(){ return []; },      fb:'fb_law',   msg:'⑥의 판정을 모두 지웠다.', run:function(){ state.lawPick = {}; } },
   case:  { qs:function(){ return []; }, ta:CASEQ, ask:true, fb:'fb_case', msg:'⑦에서 고른 사례·입장과 적은 내용을 지웠다.', run:function(){ state.caseSel = ''; state.caseStance = ''; state.caseCk = {}; } },
@@ -1763,7 +1777,7 @@ function init(){
       else if (typeof sv === typeof state[k]){ state[k] = sv; }
     });
   }
-  ['sortPut', 'viewSeen', 'ctrySeen', 'lawPick', 'qPick', 'pPick', 'ta', 'self', 'subA'].forEach(function(k){
+  ['sortPut', 'viewSeen', 'ctrySeen', 'lawPick', 'qPick', 'pPick', 'ta', 'self', 'subA', 'caseCk'].forEach(function(k){
     if (!state[k] || typeof state[k] !== 'object' || Array.isArray(state[k])) state[k] = {};
   });
   /* ★범위 밖의 값·없는 이름은 걸러 낸다 */
@@ -1774,9 +1788,11 @@ function init(){
   Object.keys(state.viewSeen).forEach(function(k){ if (!viewBy(k) || state.viewSeen[k] !== true) delete state.viewSeen[k]; });
   if (!ctryBy(state.ctrySel)) state.ctrySel = '';
   Object.keys(state.ctrySeen).forEach(function(k){ if (!ctryBy(k) || state.ctrySeen[k] !== true) delete state.ctrySeen[k]; });
+  if (!lmoCardBy(state.lmoSel)) state.lmoSel = '';
   if (STANCES.indexOf(state.stance) < 0) state.stance = '';
   Object.keys(state.lawPick).forEach(function(k){ var l = lawBy(k); if (!l || state.lawPick[k] !== l.a) delete state.lawPick[k]; });
   if (!caseBy(state.caseSel)) state.caseSel = '';
+  Object.keys(state.caseCk).forEach(function(k){ var ok = false; CASE_CK.forEach(function(c){ if (c.id === k) ok = true; }); if (!ok || state.caseCk[k] !== true) delete state.caseCk[k]; });
   if (STANCES.indexOf(state.caseStance) < 0) state.caseStance = '';
   if (!roleBy(state.role)) state.role = '';
   if (BABY_ST.indexOf(state.babySt) < 0) state.babySt = '';
